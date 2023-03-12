@@ -12,7 +12,8 @@ from typing import List, Tuple, Dict, Any, Union
 
 def cvFolderSplits(mainPath:str, k:int=0, num_folds:int=6) -> Tuple[List[Path], List[Path], List[Path]]:
     """
-    Splits all male and female folders into k folds for cross-validation
+    Splits all male and female folders into k folds for cross-validation in such a way that both male and
+    female have same porportion in all data splits.
     
     Args:
         mainPath (str): The path to the parent directory containing the subject folders.
