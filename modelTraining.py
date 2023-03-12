@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch import cuda, no_grad
+from torch import no_grad
 from torch.optim import Adam
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
@@ -9,7 +9,7 @@ from torch.utils.tensorboard import SummaryWriter
 from model import MultitaskCNN
 
 
-def trainModel( trainData: DataLoader, valData:DataLoader, device:str, logPath:str, fold:int=1,)-> None:
+def trainModel( trainData: DataLoader, valData:DataLoader, device:str, bestModelPath:str, logPath:str, fold:int)-> None:
     """
     Training Helper function.
 
@@ -17,6 +17,8 @@ def trainModel( trainData: DataLoader, valData:DataLoader, device:str, logPath:s
         trainData (DataLoader): training dataset
         valData (DataLoader): validation dataset
         device (str): device to train the model on
+        bestModelPath (str): path to save best model from each fold
+        logPath(str): directory to save train and val loss from each epoch
         fold (int): fold number, used for tracking and logging
     """
   
@@ -43,7 +45,7 @@ def trainModel( trainData: DataLoader, valData:DataLoader, device:str, logPath:s
     best_epoch = 0  
 
     # Create a summary writer object (This is for tensorboard visualization)
-    writer = SummaryWriter(log_dir=logPath)
+    writer = SummaryWriter(log_dir= f'{bestModelPath}/{logPath}')
     example_data = torch.rand(16, 1, 60, 40) # create a sample data
     writer.add_graph(model, example_data.to(device))
     
@@ -166,8 +168,9 @@ def trainModel( trainData: DataLoader, valData:DataLoader, device:str, logPath:s
                 best_val_loss = joint_loss
                 epochs_since_improvement = 0 # reset
                 best_epoch = epoch
+
                 # Save the best model
-                torch.save(model.state_dict(), f'{logPath}_{fold}.pth')
+                torch.save(model.state_dict(), f'{bestModelPath}/best_model_{fold}.pth')
             else:
                 epochs_since_improvement += 1 # update
 
