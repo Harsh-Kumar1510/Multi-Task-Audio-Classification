@@ -1,4 +1,3 @@
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -65,7 +64,7 @@ class MultitaskCNN(nn.Module):
         - A tuple of two tensors representing the logits for gender and digit classification, respectively.
         - The gender logits tensor has shape (batch_size, 1) and digit logits tensor has shape (batch_size, 10).
         """
-        
+
         # Ensure input data is 4D; otherwise add an extra dimension at position 1
         x = x if x.ndimension() == 4 else x.unsqueeze(1)
 
