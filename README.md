@@ -1,5 +1,5 @@
 # Multi-Task-Audio-Classification
-Project for Advanced Audio Processing Course at Tampere University
+Project for Advanced Audio Processing Course at Tampere University. In this project, we explored the effectiveness of multi-task learning for audio classification tasks. Our model was designed using a hard parameter sharing architecture, sharing all hidden layers but keeping task-specific output layers separate. We compared our multi-task model with two individual models trained separately for gender and digit classification. Results showed that our proposed model comparably to the individual single task models, as shown in the table below.
 
 ## Results from Cross-Validation:
 
