@@ -9,7 +9,8 @@ from typing import List, Tuple, Dict, Union
 
 class MyMultitaskDataset(Dataset):
     """
-    Custom Dataset class that loads pickle files from the given folder path and reads features, digit label, and gender label from the files. The features are zero-padded or truncated to a fixed length of 60 time-frames and are then normalized to [-1, 1]. 
+    Custom Dataset class that loads pickle files from the given folder path and reads features, digit label,and gender label 
+    from the files. The features are zero-padded or truncated to a fixed length of 60 time-frames and are then normalized to [-1,1]. 
 
     Args:
     folder_path (List[Path]): List of paths to folders containing pickle files.
