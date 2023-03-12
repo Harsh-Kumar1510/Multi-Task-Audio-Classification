@@ -1,6 +1,11 @@
 import numpy as np
 import pickle
 from pathlib import Path
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix
+
 from typing import List, Tuple, Dict, Any, Union
 
 
@@ -108,3 +113,38 @@ def computeSTD(data: Union[List, np.ndarray]) -> Tuple[float, float]:
     
     else:
         raise TypeError("Input data must be either a list or numpy ndarray.")
+    
+
+
+
+def confusionMatrixPlot(trueLabel, predLabel, 
+                        figsize:Tuple[float, float]=None,
+                        labels:List[Union[str, int]]=None)->None:
+    """ 
+    Visualize the confusion matrix for the given data.
+    Args:
+        trueLabel (numpy.ndarray): The true labels of the data.
+        predLabel (numpy.ndarray): The predicted labels of the data.
+        figsize (Tuple[float, float], optional): The size of the figure. Default is (7,5).
+        labels (List[Union[str, int]], optional): The list of labels for each class.
+        If not provided, numeric labels are used.
+    """
+    
+    # Compute confusion matrix
+    cf = confusion_matrix(y_true=trueLabel, y_pred=predLabel,normalize=None)
+
+    # Set default figure size if not provided
+    if figsize is None:
+        figsize = (7,5)
+
+    # Set default labels if label not provided
+    if labels is None:
+        labels = [str(i) for i in range(cf.shape[0])] 
+
+
+    # Vizualize
+    plt.figure(figsize= figsize)
+    sns.heatmap(cf, annot=True, xticklabels=labels, yticklabels=labels, fmt='g', cbar=False)
+    plt.xlabel('Predicted')
+    plt.ylabel('Ground Truth')
+    plt.show()
