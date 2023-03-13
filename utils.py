@@ -71,7 +71,7 @@ def cvFolderSplits(mainPath:str, k:int=0, num_folds:int=6) -> Tuple[List[Path], 
         train_female_fold = np.concatenate([female_dir_list[:start_idx_f], female_dir_list[end_idx_f+female_fold_size:]]) # train set
 
 
-    # Combine both male and female directories together
+    # Combine both male and female directories 
     test_dirs = np.concatenate([test_male_fold, test_female_fold]) # Test data
     val_dirs = np.concatenate([val_male_fold, val_female_fold]) # Val data
     train_dirs = np.concatenate([train_male_fold, train_female_fold]) # Train dat
@@ -149,3 +149,6 @@ def confusionMatrixPlot(trueLabel, predLabel,
     plt.xlabel('Predicted')
     plt.ylabel('Ground Truth')
     plt.show()
+
+
+   

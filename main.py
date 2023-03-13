@@ -4,16 +4,17 @@ import torch
 from torch import cuda
 from torch.utils.data import DataLoader
 
-from pytorchDataset import MyMultitaskDataset
-from modelTraining import trainModel
-from model import MultitaskCNN
-from modelEvaluate import evaluate
+from pytorch_dataset import MyMultitaskDataset
+from Model.model_training import trainModel
+from Model.model import MultitaskCNN
+from Model.model_evaluate import evaluate
+from Model.config import data_path, model_cfg
 from utils import *
 
 
 
 
-def main(mainPath:str, device:str,  modelPath:str, logPath:str, numFolds:int =6):
+def main(mainPath:str, device:str,  modelPath:str, logPath:str, numFolds:int=6):
     """
     Trains, evaluates, and stores the best model for each fold of a k-fold cross-validation.
 
@@ -78,7 +79,7 @@ def main(mainPath:str, device:str,  modelPath:str, logPath:str, numFolds:int =6)
         cv_accuracy_gender.append(predict['accuracy_gender']) # Get gender accuracy and store
 
 
-    # Save Prediction results
+    # Save Prediction results from all folds
     savePrediction(prediction_cv, modelPath)
 
     # Print average accuracy from CV
@@ -89,13 +90,13 @@ def main(mainPath:str, device:str,  modelPath:str, logPath:str, numFolds:int =6)
 if __name__ == "__main__":
 
     # Check if CUDA is available, else use CPU
-    device = 'cuda' if cuda.is_available() else 'cpu'
+    device = model_cfg['device']
     print(f'Process on {device}', end='\n\n')
     
     # This need to replace as per your folder structures
     mainPath = 'parent directory that contains all the folders'
-    modelPath ='path to save bestModel from each folds in CV'
+    modelPath = data_path['best_model_path'] # location to save best models and results
     logPath = 'directory name for train and val loss to save'
-    numFolds = 6
+    numFolds = model_cfg['num_folds'] # fold size
     main(mainPath=mainPath, device=device, modelPath=modelPath,logPath=logPath,numFolds=numFolds)
 
