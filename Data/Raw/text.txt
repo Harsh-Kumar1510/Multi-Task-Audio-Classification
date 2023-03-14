@@ -1,0 +1,1 @@
+For this project, we have used the audio dataset from here: https://github.com/soerenab/AudioMNIST
