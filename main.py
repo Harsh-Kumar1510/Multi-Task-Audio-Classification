@@ -8,22 +8,21 @@ from pytorch_dataset import MyMultitaskDataset
 from Model.model_training import trainModel
 from Model.model import MultitaskCNN
 from Model.model_evaluate import evaluate
-from Model.config import data_path, model_cfg
+from Model.config import model_cfg
 from utils import *
 
 
 
 
-def main(mainPath:str, device:str,  modelPath:str, logPath:str, numFolds:int=6):
+def main(mainPath:str,  modelPath:str, batchSize:int, numFolds:int=6):
     """
     Trains, evaluates, and stores the best model for each fold of a k-fold cross-validation.
 
     Args:
-        mainPath (str): The path to the parent directory containing the subject folders.
-        device (str): The device on which to run the model (e.g., 'cpu' or 'cuda').
-        modelPath (str): The location to save the best model from each fold.
-        logPath (str): The directory to save the validation and training logs from each epoch.
-        numFolds (int): The number of folds to use for cross-validation. Default: 6.
+        mainPath (str): Path to the parent directory containing the subject folders.
+        modelPath (str): Location to save the best model from each fold.
+        batchSize (int): Number of samples in a batch.
+        numFolds (int): Number of folds to use for cross-validation. Default: 6.
     """
    
     # Store  accuracy from each CV
@@ -46,39 +45,36 @@ def main(mainPath:str, device:str,  modelPath:str, logPath:str, numFolds:int=6):
         # Custom Dataset and Data loader for Training
         train_dataset = MyMultitaskDataset(train_dirs)
         print(f'Total train samples: {train_dataset.__len__()}')
-        trainDataloader = DataLoader(train_dataset, batch_size=16, shuffle=True,drop_last=True)
-
+        trainDataloader = DataLoader(train_dataset, batch_size=batchSize, shuffle=True, drop_last=True)
+        
         # Custom Dataset and Data loader for Validation
         val_dataset = MyMultitaskDataset(val_dirs)
         print(f'Total val samples: {val_dataset.__len__()}')
-        valDataloader = DataLoader(val_dataset,batch_size=16, shuffle=True, drop_last=True)
+        valDataloader = DataLoader(val_dataset, batch_size=batchSize, shuffle=True, drop_last=True)
 
         # Custom Dataset and Data loader for Testing
         test_dataset = MyMultitaskDataset(test_dirs)
         print(f'Total test samples: {test_dataset.__len__()}')
-        testDataloader = DataLoader(test_dataset, batch_size=16, shuffle=True, drop_last=True)
+        testDataloader = DataLoader(test_dataset, batch_size=batchSize, shuffle=True, drop_last=True)
         print()
-
+        
 
         # Start Training model
         trainModel(trainData=trainDataloader,
                    valData=valDataloader, 
-                   device=device, 
-                   bestModelPath=modelPath,
-                   logPath=logPath,
                    fold=k+1)
         
 
         # Evaluate on test data
-        model = MultitaskCNN() # Initiate Model
-        model.load_state_dict(torch.load(f'{modelPath}/best_model_{k+1}.pth')) # Load the best model
+        model = MultitaskCNN() # Initialize model
+        model.load_state_dict(torch.load(f'{modelPath}/best_model_{k+1}.pth', 
+                                         map_location=torch.device( model_cfg['device']))) # Load the best model weight
         model.to(device) # Specify device
         predict = evaluate(model,testDataloader, device) # Predict
         prediction_cv.append({'fold_'+ str(k+1):predict}) # store prediction
         cv_accuracy_digit.append(predict['accuracy_digit']) # Get digit accuracy and store
         cv_accuracy_gender.append(predict['accuracy_gender']) # Get gender accuracy and store
-
-
+    
     # Save Prediction results from all folds
     savePrediction(prediction_cv, modelPath)
 
@@ -94,9 +90,16 @@ if __name__ == "__main__":
     print(f'Process on {device}', end='\n\n')
     
     # This need to replace as per your folder structures
-    mainPath = 'parent directory that contains all the folders'
-    modelPath = data_path['best_model_path'] # location to save best models and results
-    logPath = 'directory name for train and val loss to save'
+    mainPath = 'Data/Processed'
+    modelPath = model_cfg['best_model_path'] # best model location
     numFolds = model_cfg['num_folds'] # fold size
-    main(mainPath=mainPath, device=device, modelPath=modelPath,logPath=logPath,numFolds=numFolds)
+    batch_size = model_cfg['batch_size'] # fold size
+
+    # Start training model
+    main(mainPath=mainPath, 
+         modelPath=modelPath, 
+         batchSize=batch_size,
+         numFolds=numFolds)
+    
+   
 
