@@ -14,7 +14,7 @@ from utils import *
 
 
 
-def main(mainPath:str,  modelPath:str, batchSize:int, numFolds:int=6):
+def main(mainPath:str,  modelPath:str, batchSize:int, numFolds:int=6)->None:
     """
     Trains, evaluates, and stores the best model for each fold of a k-fold cross-validation.
 
