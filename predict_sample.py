@@ -14,9 +14,8 @@ def predictSample(model: nn.Module, audio: torch.Tensor) -> Tuple[int, int]:
     Predicts the gender and digit of a given audio sample.
 
     Args:
-        model (nn.Module): The trained PyTorch model.
-        audio (torch.Tensor): The audio sample (mel spectogram) to predict.
-
+        model (nn.Module): Trained PyTorch model.
+        audio (torch.Tensor): Audio sample (mel spectogram) to predict.
     Returns:
         A tuple containing the predicted gender (0 or 1) and digit (0 to 9).
     """
