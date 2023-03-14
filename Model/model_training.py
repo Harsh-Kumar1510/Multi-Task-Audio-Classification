@@ -10,26 +10,25 @@ from Model.model import MultitaskCNN
 from Model.config import model_cfg
 
 
-def trainModel( trainData: DataLoader, valData:DataLoader, bestModelPath:str, logPath:str, fold:int)-> None:
+def trainModel( trainData: DataLoader, valData:DataLoader, fold:int)-> None:
     """
     Training Helper function.
 
     Args:
         trainData (DataLoader): training dataset
         valData (DataLoader): validation dataset
-        bestModelPath (str): path to save best model from each fold
-        logPath(str): directory to save train and val loss from each epoch
         fold (int): fold index, used for tracking and logging
     """
   
     # Define hyperparameters
     num_epochs = model_cfg['num_epochs']
-    batch_size = model_cfg['batch_size']
     learning_rate = model_cfg['learning_rate']
     gender_weight = model_cfg['gender_weight']
     digit_weight = model_cfg['digit_weight']
-    device = model_cfg['device']
     pos_weigth = model_cfg['pos_weight']
+
+    # Specify device
+    device = model_cfg['device']
 
     # Initialize model and optimizer
     model = MultitaskCNN().to(device)
@@ -47,7 +46,7 @@ def trainModel( trainData: DataLoader, valData:DataLoader, bestModelPath:str, lo
     best_epoch = 0  
 
     # Create a summary writer object (This is for tensorboard visualization)
-    writer = SummaryWriter(log_dir= f'{bestModelPath}/{logPath}')
+    writer = SummaryWriter(log_dir= model_cfg['log_path'])
     example_data = torch.rand(16, 1, 60, 40) # create a sample data
     writer.add_graph(model, example_data.to(device))
     
@@ -172,7 +171,7 @@ def trainModel( trainData: DataLoader, valData:DataLoader, bestModelPath:str, lo
                 best_epoch = epoch
 
                 # Save the best model
-                torch.save(model.state_dict(), f'{bestModelPath}/best_model_{fold}.pth')
+                torch.save(model.state_dict(), model_cfg['best_model_path']+f'/best_model_{fold}.pth')
             else:
                 epochs_since_improvement += 1 # update
 
