@@ -1,13 +1,5 @@
 import torch
 
-# Define Data paths 
-data_path= {
-    'log_path':'',
-    'best_model_path':'BestModelWeight',
-    'best_model_path':''
-    }
-
-
 # Model configuration
 model_cfg = {
     'learning_rate' : 0.0001,
@@ -17,6 +9,8 @@ model_cfg = {
     'pos_weight': 0.3,
     'gender_weight': 0.5,
     'digit_weight': 0.5,
+    'log_path':'Logs',  # save val and train loss
+    'best_model_path':'BestModelWeight', # location to save best model from each folds
     'device' :'cuda' if torch.cuda.is_available() else 'cpu'
  }
         
