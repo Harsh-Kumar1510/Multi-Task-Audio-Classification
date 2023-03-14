@@ -16,20 +16,25 @@ def cvFolderSplits(mainPath:str, k:int=0, num_folds:int=6) -> Tuple[List[Path], 
     female have same porportion in all data splits.
     
     Args:
-        mainPath (str): The path to the parent directory containing the subject folders.
-        k (int): The index of the fold to use as the test set (range: 0 to k-1).
-        num_folds (int): The number of folds to use for cross-validation.
+        mainPath (str): Path to the preprocessed parent directory containing the subject folders.
+        k (int): Index of the fold to use as the test set (range: 0 to num_folds-1).
+        num_folds (int): Number of folds to use for cross-validation.
 
     Returns:
         (train_dirs, val_dirs, test_dirs): A tuple containing the train, validation, and test directories.
     """
+    # Check k
+    if k >= num_folds:
+        raise ValueError(f'k must be less than {num_folds}')
+
+
     # Main folder path
     parent_dir = Path(mainPath) 
 
     # Get female and male directories
     female_dir = ['12_pickled','26_pickled','28_pickled','36_pickled','43_pickled','47_pickled','52_pickled','56_pickled','57_pickled','58_pickled','59_pickled','60_pickled'] # list of female directories
-    female_dir_list = [dir for dir in parent_dir.iterdir() if dir.is_dir() and dir.parts[-1] in female_dir] # feamle directories
-    male_dir_list = [dir for dir in parent_dir.iterdir() if dir.is_dir() and dir.parts[-1] not in female_dir] # male directories
+    female_dir_list = [dir for dir in parent_dir.iterdir() if dir.is_dir() and dir.parts[-1] in female_dir] # Female directory full paths
+    male_dir_list = [dir for dir in parent_dir.iterdir() if dir.is_dir() and dir.parts[-1] not in female_dir] # Male directory full paths
 
     # Shuffle male and female directory separaretly using a fixed random seed before CV splits
     np.random.seed(42)
@@ -46,6 +51,7 @@ def cvFolderSplits(mainPath:str, k:int=0, num_folds:int=6) -> Tuple[List[Path], 
     end_idx_m = (k + 1) * male_fold_size
     test_male_fold = male_dir_list[start_idx_m:end_idx_m]
     test_male_fold = male_dir_list[start_idx_m:end_idx_m] # test set
+
     # Val and train set at last fold
     if k == num_folds-1:
         val_male_fold = male_dir_list[:male_fold_size] # take first folds as val set
@@ -124,10 +130,10 @@ def confusionMatrixPlot(trueLabel, predLabel,
     """ 
     Visualize the confusion matrix for the given data.
     Args:
-        trueLabel (numpy.ndarray): The true labels of the data.
-        predLabel (numpy.ndarray): The predicted labels of the data.
-        figsize (Tuple[float, float], optional): The size of the figure. Default is (7,5).
-        labels (List[Union[str, int]], optional): The list of labels for each class.
+        trueLabel (numpy.ndarray): True labels of the data.
+        predLabel (numpy.ndarray): Predicted labels of the data.
+        figsize (Tuple[float, float], optional): Size of the figure. Default is (7,5).
+        labels (List[Union[str, int]], optional): List of labels for each class.
         If not provided, numeric labels are used.
     """
     
