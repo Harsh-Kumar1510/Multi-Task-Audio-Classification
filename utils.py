@@ -124,14 +124,17 @@ def computeSTD(data: Union[List, np.ndarray]) -> Tuple[float, float]:
 
 
 
-def confusionMatrixPlot(trueLabel, predLabel, 
+def confusionMatrixPlot(trueLabel:Union[list,np.ndarray], 
+                        predLabel:Union[list,np.ndarray],
+                        location: str,
                         figsize:Tuple[float, float]=None,
                         labels:List[Union[str, int]]=None)->None:
     """ 
     Visualize the confusion matrix for the given data.
     Args:
-        trueLabel (numpy.ndarray): True labels of the data.
-        predLabel (numpy.ndarray): Predicted labels of the data.
+        trueLabel (Union[list,np.ndarray]): True labels of the data.
+        predLabel (Union[list,np.ndarray]): Predicted labels of the data.
+        location (str): Title of the plot.
         figsize (Tuple[float, float], optional): Size of the figure. Default is (7,5).
         labels (List[Union[str, int]], optional): List of labels for each class.
         If not provided, numeric labels are used.
@@ -154,6 +157,7 @@ def confusionMatrixPlot(trueLabel, predLabel,
     sns.heatmap(cf, annot=True, xticklabels=labels, yticklabels=labels, fmt='g', cbar=False)
     plt.xlabel('Predicted')
     plt.ylabel('Ground Truth')
+    plt.savefig(location)
     plt.show()
 
 
